@@ -71,10 +71,13 @@ Everything is NumPy + MuJoCo (no PyTorch). Developed on MuJoCo 3.17; the stage 4
 python3 benchmark_classical.py --cond nominal varied stress --seeds 0 1 2 --tasks 10 --out results/classical_raw.csv
 python3 summarize_benchmark.py "results/classical_raw*.csv"
 
-# Stages 2-3: train a network live, then evaluate on mid-episode changes, noise and delay
-python3 train_live.py --headless --tasks 200 --history --out nn_hist.npz
+# Stages 2-3: trained networks are in models/ (3 per kind, different seeds); retraining is optional
+python3 benchmark_classical.py --cond varied --seeds 0 --tasks 3 --ctrl ctnn --net models/stage2_nohist_s1.npz --out results/stage2_check.csv   # stage 2 network
+python3 benchmark_classical.py --cond varied --seeds 0 --tasks 3 --ctrl ctinn asl --net models/stage3_hist_s1.npz --out results/stage3_check.csv # stage 3 network + adaptive law
 python3 eval_shift.py --shifts both heavy friction mixed --seeds 10 11 12 --tasks 3 --noise 1e-4 1e-2 \
-    --cti w60=60 --adaptive asl60=60,64 --nets hist=nn_hist.npz --nets-wn 60 --out results/fair/example.csv
+    --cti w60=60 --adaptive asl60=60,64 --nets hist=models/stage3_hist_s1.npz,models/stage3_hist_s2.npz,models/stage3_hist_s3.npz \
+    --nets-wn 60 --out results/fair/example.csv                      # the fair comparison against the tuned 60 rad/s controller
+python3 train_live.py --headless --tasks 200 --history --out nn_hist.npz     # retrain a stage 3 network (about 10 min)
 
 # Stage 4: imitation, then PPO (SLURM script for a cluster), then evaluation on unseen tasks
 python3 imitate.py --iters 8 --out runs/il && cp runs/il/policy.npz runs/il_policy.npz
@@ -96,6 +99,7 @@ rl_env.py  imitate.py  train_ppo.py                stage 4: environment + expert
 eval_policies.py  check_env.py  record_stage4.py   stage 4: fair evaluation, environment check, side-by-side video
 run_ppo.sbatch  eval_ppo.sbatch                    SLURM jobs
 results/                                           raw CSVs and summary tables
+models/                                            trained stage 2-3 networks (no-history, history, noise-aware; 3 seeds each)
 runs/il_policy.npz, runs/cluster_ppo/              trained stage 4 policies (imitation and 5 PPO seeds)
 ```
 

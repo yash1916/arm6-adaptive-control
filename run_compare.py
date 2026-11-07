@@ -13,8 +13,7 @@ q1 = np.array([0.5, -0.4, 0.8, 0.3, -0.5, 0.4])         # target pose (rad)
 KP = np.array([300, 500, 300, 40, 30, 15.])
 KD = np.array([40, 60, 40, 4, 3, 1.5])
 
-controllers = {"PD": PD(KP, KD), "PD + gravity comp": PDGravity(m, KP, KD),
-               "CT (no damping model)": ComputedTorque(wn=20),
+controllers = {"PD": PD(KP, KD), "PD + gravity comp": PDGravity(m, KP, KD), "CT (no damping model)": ComputedTorque(wn=20),
                "CT (full model)": ComputedTorque(wn=20, model_damping=True)}
 results = {name: simulate(m, d, c, q0, q1, T_move=T_MOVE, T_total=T_MOVE + 2.0) for name, c in controllers.items()}
 

@@ -142,8 +142,9 @@ arm6_mujoco/
 ```
 # Stage 2-3: network training and evaluation
 python3 train_live.py --headless --tasks 200 --history --out nn_hist.npz        # add --noise-train for the noise-aware network
+# trained networks (models/): stage2_nohist_s{1,2,3}.npz  stage3_hist_s{1,2,3}.npz  stage3_noiseaware_s{1,2,3}.npz  stage2_nn_150.npz
 python3 eval_shift.py --shifts both heavy friction mixed --seeds 10 11 12 --tasks 3 --noise 1e-4 1e-2 \
-    --cti w60=60 --adaptive asl60=60,64 --nets hist=nn_hist.npz --nets-wn 60 --out results/fair/example.csv
+    --cti w60=60 --adaptive asl60=60,64 --nets hist=models/stage3_hist_s1.npz,models/stage3_hist_s2.npz,models/stage3_hist_s3.npz --nets-wn 60 --out results/fair/example.csv
 python3 eval_shift.py --delay 5 ...                                              # control delay in simulation steps (5 = 10 ms)
 
 # Stage 4: learned policies

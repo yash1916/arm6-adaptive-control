@@ -52,3 +52,17 @@ def metrics(log, T_move=2.0, tol=0.01):
     return dict(rms_err=float(np.sqrt(np.mean(err**2))), peak_err=float(err.max()),
                 final_err=float(err[-1]), settle_s=float(settle),
                 effort=float(np.sum(log["tau"]**2) * dt))
+
+
+def cyclic_reference(q0, q1, t, T_move=1.0, T_hold=1.0):
+    """Endless demo motion: out (T_move) -> hold (T_hold) -> back (T_move) -> hold (T_hold) -> repeat.
+    Returns reference position, velocity, acceleration at time t."""
+    period = 2 * (T_move + T_hold)
+    u = t % period
+    if u < T_move:
+        return quintic(q0, q1, T_move, u)
+    if u < T_move + T_hold:
+        return q1.copy(), np.zeros_like(q1), np.zeros_like(q1)
+    if u < 2 * T_move + T_hold:
+        return quintic(q1, q0, T_move, u - T_move - T_hold)
+    return q0.copy(), np.zeros_like(q0), np.zeros_like(q0)
