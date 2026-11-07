@@ -1,0 +1,10 @@
+# Core (everything runs on these; no PyTorch needed)
+numpy>=1.26
+scipy>=1.11
+mujoco>=3.9
+# Only for rendering videos / plots
+imageio>=2.34
+imageio-ffmpeg>=0.5
+pillow>=10
+matplotlib>=3.8
+pandas>=2.0

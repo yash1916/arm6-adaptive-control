@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+venv*/
+.venv/
+.vscode/
+logs/
+*.log
+*.db
+runs/*
+!runs/il_policy.npz
+!runs/cluster_ppo/
+*.mp4
+!media/*.mp4
